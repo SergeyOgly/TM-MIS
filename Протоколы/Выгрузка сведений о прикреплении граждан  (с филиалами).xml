@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="windows-1251"?><Main><FORMAT_GUID>562dc30c-84d7-4f7e-aadd-08dd14e10aee</FORMAT_GUID><PROTOCOL>Выгрузка сведений о прикреплении граждан (с филиалами)</PROTOCOL><VER>1.00006</VER><Author>KRG-OVIS-0005\travis</Author><CREATE_BY>MalibuDTS</CREATE_BY><CREATE_TIME>10.12.2020T9:53:02</CREATE_TIME><TITLE>Выгрузка сведений о прикреплении граждан  (с филиалами)</TITLE><Description>Выгрузка сведений о прикреплении граждан  (с филиалами)</Description><WriteHistory>0</WriteHistory><DebugMode>0</DebugMode><SilentMode>1</SilentMode><WithoutAnimationMode>0</WithoutAnimationMode><FullTransactionMode>0</FullTransactionMode><MultiRowsMode>1</MultiRowsMode><MultiRowsAsOneMode>0</MultiRowsAsOneMode><TransactionLevel>IsolationLevel.ReadUncommitted</TransactionLevel><Loaders><Loader><Location>inner</Location><Type>MSSQL</Type><Config><Table><TableName>tmp_KlAdr</TableName><Script>SELECT
+	Name + ISNULL(' '+ NULLIF(SOCR +'.', ''), '') AS [KlAdrNAME],
+	CODE AS [KlAdrCODE],
+	LEVEL AS [KlAdrLEVEL]
+FROM kla_KlAdr
+WHERE CODE LIKE '%00'</Script><Type>1</Type></Table><Table><TableName>tmp_Address</TableName><Script>WITH
+	tmp_MKAB(
+		rf_AddressID
+	)
+AS
+	(
+		SELECT rf_AddressLiveID
+		FROM @MKAB
+		UNION
+		SELECT rf_AddressRegID
+		FROM @MKAB
+	)
+SELECT
+	AddressID,
+	ISNULL(NULLIF(NULLIF(Appartment, '0'), 'не определено'), '') AS [KV],
+	rf_HouseID
+FROM
+	tmp_MKAB,
+	kla_Address (NOLOCK)
+WHERE rf_AddressID = AddressID</Script><Type>1</Type></Table><Table><TableName>tmp_House</TableName><Script>SELECT
+	AddressID,
+	ISNULL(NULLIF(Number, 'не определено'), '') AS [DOM],
+	ISNULL(NULLIF(Building, 'не определено'), '') AS [KORP],
+	KV,
+	rf_StreetID
+FROM
+	[tmp_Address],
+	kla_House (NOLOCK)
+WHERE rf_HouseID = HouseID</Script><Type>1</Type></Table><Table><TableName>tmp_Street</TableName><Script>SELECT
+	AddressID,
+	LEFT(PostIndex, 6) AS [INDX],
+	LEFT(OCATD, 11) AS [OKATO],
+	ISNULL(
+			(
+				SELECT TOP(1) LEFT(KlAdrNAME, 80)
+				FROM [tmp_KlAdr]
+				WHERE
+					LEFT(CODE, 5) +'00000000' = KlAdrCODE
+				AND KlAdrLEVEL = 2
+			), ''
+	) AS [RNNAME],
+	ISNULL(
+			(
+				SELECT TOP(1) KlAdrNAME +', '
+				FROM [tmp_KlAdr]
+				WHERE
+					LEFT(CODE, 8) +'00000' = KlAdrCODE
+				AND KlAdrLEVEL = 3
+			), ''
+	)
++
+	ISNULL(
+			(
+				SELECT TOP(1) KlAdrNAME
+				FROM [tmp_KlAdr]
+				WHERE LEFT(CODE, 11) = LEFT(KlAdrCODE, 11)
+			), ''
+	) AS [NPNAME],
+	LEFT(ISNULL(NULLIF(Name, 'не определено'), '') + ISNULL(' '+ NULLIF(SOCR, '') +'.', ''), 80) AS [UL],
+	LEFT(DOM, 7) AS [DOM],
+	LEFT(KORP, 6) AS [KORP],
+	LEFT(KV, 6) AS [KV]
+FROM
+	[tmp_House],
+	kla_Street (NOLOCK)
+WHERE rf_StreetID = StreetID</Script><Type>1</Type></Table><Table><TableName>tmp_ADDRES_G</TableName><Script>SELECT
+	MKABID AS [rf_MKABID],
+	BOMG,
+	ISNULL(LEFT(NULLIF(OKATO, ''), 2) +'000', '') AS [SUBJ],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(INDX, 6)
+		ELSE ''
+	END AS [INDX],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(OKATO, 11)
+		ELSE ''
+	END AS [OKATO],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(RNNAME, 80)
+		ELSE ''
+	END AS [RNNAME],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(NPNAME, 80)
+		ELSE ''
+	END AS [NPNAME],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(UL, 80)
+		ELSE ''
+	END AS [UL],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(DOM, 7)
+		ELSE ''
+	END AS [DOM],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(KORP, 6)
+		ELSE ''
+	END AS [KORP],
+	CASE
+		BOMG
+		WHEN 0 THEN LEFT(KV, 6)
+		ELSE ''
+	END AS [KV],
+	CASE
+		BOMG
+		WHEN 0 THEN DREG
+		ELSE '1900-01-01'
+	END AS [DREG]
+FROM
+	@MKAB,
+	[tmp_Street]
+WHERE rf_AddressRegID = AddressID</Script><Type>1</Type></Table><Table><TableName>tmp_ADDRES_P</TableName><Script>SELECT
+	MKABID AS [rf_MKABID],
+	ISNULL(LEFT(NULLIF(OKATO, ''), 2) +'000', '') AS [SUBJ],
+	LEFT(INDX, 6) AS [INDX],
+	LEFT(OKATO, 11) AS [OKATO],
+	LEFT(RNNAME, 80) AS [RNNAME],
+	LEFT(NPNAME, 80) AS [NPNAME],
+	LEFT(UL, 80) AS [UL],
+	LEFT(DOM, 7) AS [DOM],
+	LEFT(KORP, 6) AS [KORP],
+	LEFT(KV, 6) AS [KV]
+FROM
+	@MKAB,
+	[tmp_Street]
+WHERE rf_AddressLiveID = AddressID</Script><Type>1</Type></Table><Table><TableName>tmp_PERSON</TableName><Script>SELECT
+	N_REC AS [REC_N],
+	LEFT(FAM, 40) AS [FAM],
+	LEFT(IM, 40) AS [IM],
+	LEFT(OT, 40) AS [OT],
+	W,
+	DR,
+	LEFT(ENP, 16) AS [ENP],
+	LEFT('@Document.COD', 5) AS [SMOCODE],
+	VPOLIS,
+	CASE
+		dbo.CheckENP(NPOLIS)
+		WHEN 0 THEN LEFT(NPOLIS, 20)
+		ELSE N_BLANK
+	END AS [NPOLIS],
+	LEFT(SPOLIS, 10) AS [SPOLIS],
+	DOCTYPE,
+	LEFT(DOCSER, 10) AS [DOCSER],
+	LEFT(DOCNUM, 20) AS [DOCNUM],
+	C_OKSM,
+	SS,
+	LEFT(PHONE, 40) AS [PHONE],
+	LEFT(EMAIL, 50) AS [EMAIL],
+	LEFT(FIOPR, 130) AS [FIOPR],
+	LEFT(CONTACT, 130) AS [CONTACT],
+	LEFT(MR, 100) AS [MR]
+FROM
+	@MedRecord,
+	@MKAB
+WHERE PersonGUID = UGUID</Script><Type>1</Type></Table><Table><TableName>tmp_VIZIT</TableName><Script>SELECT
+	N_REC AS [REC_N],
+	DVIZIT,
+	RVIZIT,
+	LEFT(MCODE2, 6) AS [MCODE2],
+	(select top 1 LTRIM(RTRIM(LIC)) 
+		from Oms_LPU 
+		where LPUID = (select top 1 rf_LPUID 
+			from hlt_Uchastok where CODE = UCHAST)) AS [OID_MO],
+	(select top 1 LTRIM(RTRIM(MCOD)) 
+		from Oms_LPU 
+		where LPUID = (select top 1 rf_LPUID 
+			from hlt_Uchastok where CODE = UCHAST)) AS [PODR],
+	LEFT(UCHAST, 10) AS [UCHAST],
+	LEFT(DOCCODE, 11) AS [DOCCODE],
+	COMMENT
+FROM
+	@MedRecord,
+	@MKAB
+WHERE PersonGUID = UGUID</Script><Type>1</Type></Table><Table><TableName>tmp_OP</TableName><Script>SELECT
+	@Document.SMOID AS [rf_SMOID],
+	MedRecordID,
+	N_REC,
+	MKABID
+FROM
+	@MedRecord,
+	@MKAB
+WHERE PersonGUID = UGUID</Script><Type>1</Type></Table><Table><TableName>tmp_OPLIST</TableName><Script>SELECT
+	@Document.SMOID AS [SMOID],
+	'@VERS' AS [VERS],
+	'@FILENAME' AS [FILENAME],
+	'@FCOD' AS [MCODE],
+	COUNT(*) AS [NRECORDS]
+FROM
+	@MedRecord,
+	@MKAB
+WHERE PersonGUID = UGUID</Script><Type>1</Type></Table><Table><TableName>tmp_UchastokMkabReestr</TableName><Script>SELECT
+	GETDATE() AS [DateCreate],
+	'@DateUnload' AS [DateUnload],
+	'@FILENAME' AS [FileName],
+	NEWID() AS [GUID],
+	MONTH('@DateUnload') AS [Month_Ot],
+	SUM(NRECORDS) AS [NoticeCount],
+	@NUM AS [Num],
+	CommonReestrTypeID AS [rf_CommonReestrTypeID],
+	@Document.SMOID AS [rf_SMOID],
+	YEAR('@DateUnload') AS [Year_OT]
+FROM
+	[tmp_OPLIST],
+	hlt_CommonReestrType	
+WHERE
+	COD = 'R_ARM_01_1'
+AND @Document.SMOID &gt; 0
+GROUP BY CommonReestrTypeID
+HAVING SUM(NRECORDS) &gt; 0;</Script><Type>1</Type></Table></Config></Loader></Loaders><TransportEngine><Config><Params><Param><ParamName>VERS</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр14</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT '2.0';</ParamDefaultValue></Param><Param><ParamName>LPUID</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр2</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT ISNULL(MAX(LPUID), 0)
+FROM
+	oms_LPU
+	LEFT JOIN x_UserSettings ON MCOD = ValueStr
+WHERE Property = 'Код поликлиники';</ParamDefaultValue></Param><Param><ParamName>MCOD</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр15</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT LTRIM(RTRIM(MCOD))
+FROM oms_LPU
+WHERE LPUID = @LPUID;</ParamDefaultValue></Param><Param><ParamName>FCOD</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр13</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT FCOD
+FROM oms_LPU
+WHERE LPUID = @LPUID;</ParamDefaultValue></Param><Param><ParamName>OID</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр13</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT Lic
+FROM oms_LPU
+WHERE LPUID = @LPUID;</ParamDefaultValue></Param><Param><ParamName>CommonReestrTypeID</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр4</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT ISNULL(MAX(CommonReestrTypeID), 0)
+FROM hlt_CommonReestrType
+WHERE COD = 'R_ARM_01_1';</ParamDefaultValue></Param><Param><ParamName>DateUnload</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр8</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT CONVERT(VARCHAR(10), GETDATE(), 127) +'T00:00:00';</ParamDefaultValue></Param><Param><ParamName>NUM</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр6</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT ISNULL(MAX(Num), 0) + 1
+FROM hlt_UchastokMkabReestr
+WHERE
+	Month_Ot = MONTH('@DateUnload')
+AND rf_CommonReestrTypeID = @CommonReestrTypeID
+AND rf_SMOID = @Document.SMOID
+AND Year_Ot = YEAR('@DateUnload');
+
+</ParamDefaultValue></Param><Param><ParamName>FILENAME</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр14</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT
+	'AMM'
+	+
+	'@FCOD'
+	+'S'+
+	'@Document.COD'
+	+'_'+
+	CONVERT(VARCHAR(4), CONVERT(DATETIME, '@DateUnload'), 12)
+	+
+	'@NUM';</ParamDefaultValue></Param><Param><ParamName>BlankTemplateID</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр9</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT MAX(BlankTemplateID)
+FROM hlt_BlankTemplate
+WHERE GUID = 'BE80AFC5-0FD8-E811-9C06-2C4D546667A5';</ParamDefaultValue></Param><Param><ParamName>MedRecord</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр11</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT
+	'[tmpdts'+
+	REPLACE(LOWER(CONVERT(VARCHAR(36), NEWID())), '-', '')
+	+']';</ParamDefaultValue></Param><Param><ParamName>MKAB</ParamName><ParamType>SqlExpression</ParamType><ParamTitle>Параметр12</ParamTitle><ParamConfig /><ParamDefaultValue>SELECT
+	'[tmpdts'+
+	REPLACE(LOWER(CONVERT(VARCHAR(36), NEWID())), '-', '')
+	+']';</ParamDefaultValue></Param><Param><ParamName>OtherTerFlag</ParamName><ParamType>LoadFilter</ParamType><ParamTitle>LoadFilter</ParamTitle><ParamDefaultValue>False</ParamDefaultValue></Param></Params><TempTables></TempTables><Reports><Report><Location>AfterLoad</Location><ReportCaption>Анализ количества данных для выгрузки</ReportCaption><ButtonsScript>SELECT
+	1 - COUNT(*) AS [Report_Enabled],
+	0 AS [ButtonNext_Visible]
+FROM [tmp_UchastokMkabReestr];</ButtonsScript><ReportScripts /><ReportXSLT><xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:template match="main">
+    <html>
+      <head>
+        <title>
+        </title>
+      </head>
+      <body>
+        <p>Нет данных для выгрузки</p>
+      </body>
+    </html>
+  </xsl:template>
+</xsl:stylesheet></ReportXSLT></Report></Reports><ScriptsBeforeLoad><Script name="Заявления на прикрепления">SET LANGUAGE russian;
+
+WITH XMLNAMESPACES('http://xml.softrust.ru/schema/AddoHtm' AS ns0)
+SELECT
+	MedRecordID,
+	ISNULL(CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="pol_n"]').value('(//@value)[1]', 'VARCHAR(20)'), '') AS [N_BLANK],
+	dbo.IsVarcharDate(CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="adr_dat"]').value('(//@value)[1]', 'VARCHAR(10)'), NULL) AS [DREG],
+	ISNULL(
+			(
+				SELECT TOP(1)
+					UPPER(FAMILY)
+					+
+					ISNULL(' '+ NULLIF(UPPER(NAME), ''), '')
+					+
+					ISNULL(' '+ NULLIF(UPPER(OT), ''), '')
+				FROM hlt_RepresentativeMKAB (NOLOCK)
+				WHERE RepresentativeMKABID = CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="agent"]').value('(//@instanceid)[1]', 'INT')
+			), ''
+	) AS [FIOPR],
+	ISNULL(
+			(
+				SELECT TOP(1)
+					CASE
+						LEN(Phone)
+						WHEN 0 THEN OtherContactInf
+						ELSE Phone
+					END
+				FROM hlt_RepresentativeMKAB (NOLOCK)
+				WHERE RepresentativeMKABID = CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="agent"]').value('(//@instanceid)[1]', 'INT')
+			), ''
+	) AS [CONTACT],
+	dbo.IsVarcharDate(CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="date_extract"]').value('(//@value)[1]', 'VARCHAR(10)'), NULL) AS [DVIZIT],
+	ISNULL(CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="reason_1"][@state="checked"]').value('(//@value)[1]', 'INT'), 0) +
+	ISNULL(CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="reason_2"][@state="checked"]').value('(//@value)[1]', 'INT'), 0) +
+	ISNULL(CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="reason_3"][@state="checked"]').value('(//@value)[1]', 'INT'), 0) AS [RVIZIT],
+	ISNULL(
+			(
+				SELECT TOP(1) FCOD
+				FROM oms_LPU
+				WHERE LPUID = CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="from_lpu"]').value('(//@instanceid)[1]', 'INT')
+			), ''
+	) AS [MCODE2],
+	ISNULL(CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="comment"]').value('(//@value)[1]', 'VARCHAR(250)'), '') AS [COMMENT],
+	Guid AS [N_REC],
+	PersonGUID
+INTO @MedRecord
+FROM
+	hlt_MedRecord (NOLOCK)
+	LEFT JOIN hst_ATTACH ON rf_MedRecordID = MedRecordID
+WHERE
+	rf_BlankTemplateID = @BlankTemplateID
+AND CONVERT(XML, Data).query('/ns0:root/ns0:element[@id="smo"]').value('(//@instanceid)[1]', 'INT') = @Document.SMOID
+AND ATTACHID IS NULL;</Script><Script name="МКАБ">WITH
+	tmp_MedRecord(
+		rf_MKABGuid,
+		DREG
+	)
+AS
+	(
+		SELECT
+			PersonGUID,
+			MIN(DREG)
+		FROM @MedRecord
+		GROUP BY PersonGUID
+	)
+SELECT
+	MKABID,
+	UGUID,
+	UPPER(FAMILY) AS [FAM],
+	UPPER(NAME) AS [IM],
+	CASE
+		LEN(OT)
+		WHEN 0 THEN 'НЕТ'
+		ELSE UPPER(OT)
+	END AS [OT],
+	CASE
+		PATINDEX('[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9] [0-9][0-9]', SS)
+		WHEN 0 THEN '000-000-000 00'
+		ELSE SS
+	END AS [SS],
+	2 - W AS [W],
+	DATE_BD AS [DR],
+	ISNULL(
+			(
+				SELECT TOP(1) CONVERT(VARCHAR, LTRIM(RTRIM(CODE)))
+				FROM hlt_Uchastok (NOLOCK)
+				WHERE rf_UchastokID = UchastokID
+			), ''
+	) AS [UCHAST],
+	ISNULL(
+			(
+				SELECT TOP(1) CONVERT(VARCHAR, dbo.IsNumber(SS))
+				FROM
+					hlt_Uchastok (NOLOCK),
+					hlt_LPUDoctor
+				WHERE
+					rf_LPUDoctorID = LPUDoctorID
+				AND rf_UchastokID = UchastokID
+			), ''
+	) AS [DOCCODE],
+	ISNULL(
+			(
+				SELECT TOP(1) C_DOC
+				FROM oms_TYPEDOC
+				WHERE rf_TYPEDOCID = TYPEDOCID
+			), 0
+	) AS [DOCTYPE],
+	S_POL AS [SPOLIS],
+	N_POL AS [NPOLIS],
+	CASE
+		dbo.CheckENP(N_POL)
+		WHEN 0 THEN ''
+		ELSE N_POL
+	END AS [ENP],
+	S_DOC AS [DOCSER],
+	N_DOC AS [DOCNUM],
+	CASE
+		rf_kl_SocStatusID
+		WHEN 33 THEN 1
+		ELSE 0
+	END AS [BOMG],
+	rf_AddressLiveID,
+	rf_AddressRegID,
+	contactEmail AS [EMAIL],
+	CASE
+		LEN(PhoneHome)
+		WHEN 0 THEN contactMPhone
+		ELSE PhoneHome
+	END AS [PHONE],
+	ISNULL(
+			(
+				SELECT TOP(1) IDDOC
+				FROM oms_kl_TipOMS
+				WHERE rf_kl_TipOMSID = kl_TipOMSID
+			), 0
+	) AS [VPOLIS],
+	Birthplace AS [MR],
+	ISNULL(
+			(
+				SELECT TOP(1) NULLIF(ALFA3, '')
+				FROM oms_OKSM
+				WHERE rf_OKSMID = OKSMID
+			), 'RUS'
+	) AS [C_OKSM],
+	DREG
+INTO @MKAB
+FROM
+	tmp_MedRecord,
+	hlt_MKAB (NOLOCK)
+WHERE rf_MKABGuid = UGUID;</Script></ScriptsBeforeLoad><ScriptsAfterLoad><Script name="Удаление временных таблиц">IF NOT OBJECT_ID('@MKAB', 'U') IS NULL
+	DROP TABLE @MKAB;
+
+IF NOT OBJECT_ID('@MedRecord', 'U') IS NULL
+	DROP TABLE @MedRecord;</Script></ScriptsAfterLoad><ScriptsAfterUnload></ScriptsAfterUnload></Config></TransportEngine><Unloaders><Unloader><Location>inner</Location><Type>XML</Type><Config><Encoding>windows-1251</Encoding><XsltShablons></XsltShablons><FileMask>TS\@FILENAME.xml</FileMask><MainTag></MainTag><Header></Header><DataXPath></DataXPath><XSDSchema name="OPLIST"><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:sql="urn:schemas-microsoft-com:mapping-schema" id="OPLISTSchema">
+  <xs:annotation>
+    <xs:appinfo>
+      <sql:relationship name="LIST_OP" parent="tmp_OPLIST" parent-key="SMOID" child="tmp_OP" child-key="rf_SMOID" />
+      <sql:relationship name="OP_PERSON" parent="tmp_OP" parent-key="N_REC" child="tmp_PERSON" child-key="REC_N" />
+      <sql:relationship name="OP_ADDRES_G" parent="tmp_OP" parent-key="MKABID" child="tmp_ADDRES_G" child-key="rf_MKABID" />
+      <sql:relationship name="OP_ADDRES_P" parent="tmp_OP" parent-key="MKABID" child="tmp_ADDRES_P" child-key="rf_MKABID" />
+      <sql:relationship name="OP_VIZIT" parent="tmp_OP" parent-key="N_REC" child="tmp_VIZIT" child-key="REC_N" />
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="OPLIST" sql:relation="tmp_OPLIST">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="VERS" type="xs:string" />
+        <xs:element name="FILENAME" type="xs:string" />
+        <xs:element name="MCODE" type="xs:string" />
+        <xs:element name="NRECORDS" type="xs:int" />
+        <xs:element name="OP" sql:relation="tmp_OP" sql:relationship="LIST_OP">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="N_REC" type="xs:string" />
+              <xs:element name="PERSON" sql:relation="tmp_PERSON" sql:relationship="OP_PERSON">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="FAM" type="xs:string" />
+                    <xs:element name="IM" type="xs:string" />
+                    <xs:element name="OT" type="xs:string" />
+                    <xs:element name="W" type="xs:int" />
+                    <xs:element name="DR" type="xs:date" />
+                    <xs:element name="ENP" type="xs:int" />
+                    <xs:element name="SMOCODE" type="xs:string" />
+                    <xs:element name="VPOLIS" type="xs:int" />
+                    <xs:element name="NPOLIS" type="xs:string" />
+                    <xs:element name="SPOLIS" type="xs:string" />
+                    <xs:element name="DOCTYPE" type="xs:string" />
+                    <xs:element name="DOCSER" type="xs:string" />
+                    <xs:element name="DOCNUM" type="xs:string" />
+                    <xs:element name="C_OKSM" type="xs:string" />
+                    <xs:element name="SS" type="xs:string" />
+                    <xs:element name="PHONE" type="xs:string" />
+                    <xs:element name="EMAIL" type="xs:string" />
+                    <xs:element name="FIOPR" type="xs:string" />
+                    <xs:element name="CONTACT" type="xs:string" />
+                    <xs:element name="MR" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="ADDRES_G" sql:relation="tmp_ADDRES_G" sql:relationship="OP_ADDRES_G">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="BOMG" type="xs:int" />
+                    <xs:element name="SUBJ" type="xs:string" />
+                    <xs:element name="INDX" type="xs:string" />
+                    <xs:element name="OKATO" type="xs:string" />
+                    <xs:element name="RNNAME" type="xs:string" />
+                    <xs:element name="NPNAME" type="xs:string" />
+                    <xs:element name="UL" type="xs:string" />
+                    <xs:element name="DOM" type="xs:string" />
+                    <xs:element name="KORP" type="xs:string" />
+                    <xs:element name="KV" type="xs:string" />
+                    <xs:element name="DREG" type="xs:date" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="ADDRES_P" sql:relation="tmp_ADDRES_P" sql:relationship="OP_ADDRES_P">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="SUBJ" type="xs:string" />
+                    <xs:element name="INDX" type="xs:string" />
+                    <xs:element name="OKATO" type="xs:string" />
+                    <xs:element name="RNNAME" type="xs:string" />
+                    <xs:element name="NPNAME" type="xs:string" />
+                    <xs:element name="UL" type="xs:string" />
+                    <xs:element name="DOM" type="xs:string" />
+                    <xs:element name="KORP" type="xs:string" />
+                    <xs:element name="KV" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="VIZIT" sql:relation="tmp_VIZIT" sql:relationship="OP_VIZIT">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="DVIZIT" type="xs:date" />
+                    <xs:element name="RVIZIT" type="xs:int" />
+                    <xs:element name="MCODE2" type="xs:string" />
+                    <xs:element name="OID_MO" type="xs:string" />
+                    <xs:element name="PODR" type="xs:string" />
+                    <xs:element name="UCHAST" type="xs:string" />
+                    <xs:element name="DOCCODE" type="xs:string" />
+                    <xs:element name="COMMENT" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema></XSDSchema><Zip>TRUE</Zip></Config></Unloader><Unloader><Location>inner</Location><Type>MSSQL</Type><Config><DestStructure><Table><Name>hlt_UchastokMkabReestr</Name><Fields /></Table><Table><Name>hst_ATTACH</Name><Fields /></Table></DestStructure><Destinations><Destination><UpdateType>I</UpdateType><DestTable>hlt_UchastokMkabReestr</DestTable><IdentityInsert>0</IdentityInsert><SourceTable script="">tmp_UchastokMkabReestr</SourceTable></Destination><Destination><UpdateType>I</UpdateType><DestTable>hst_ATTACH</DestTable><IdentityInsert>0</IdentityInsert><SourceTable script="SELECT&#xD;&#xA;	UchastokMkabReestrID AS [rf_UchastokMKABReestrID],&#xD;&#xA;	MedRecordID AS [rf_MedRecordID],&#xD;&#xA;	'@DateUnload' AS [Date],&#xD;&#xA;	'Выгружено в СМО' AS [Comment]&#xD;&#xA;FROM&#xD;&#xA;	[tmp_OP],&#xD;&#xA;	hlt_UchastokMkabReestr (NOLOCK)&#xD;&#xA;WHERE&#xD;&#xA;	Filename = '@FILENAME'&#xD;&#xA;AND Status = 0" /></Destination></Destinations></Config></Unloader></Unloaders><DocTypeDefName>SMO</DocTypeDefName><LinkedTableName>oms_SMO</LinkedTableName><PathForMove></PathForMove><FileLoadPath></FileLoadPath><FileAutoLoad>0</FileAutoLoad><DataFormatGuid></DataFormatGuid><TransportChannelAlias_Export></TransportChannelAlias_Export><TransportChannelAlias_Import></TransportChannelAlias_Import><Comments>&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.12.2020 22:25]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.12.2020 22:26]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.12.2020 22:36]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.12.2020 22:36]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.12.2020 23:10]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.12.2020 23:10]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.12.2020 23:55]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [10.12.2020 0:01]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [10.12.2020 9:53]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;</Comments></Main>
