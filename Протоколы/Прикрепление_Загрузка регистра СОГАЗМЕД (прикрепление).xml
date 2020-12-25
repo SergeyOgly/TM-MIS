@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="windows-1251"?><Main><FORMAT_GUID>6a542a46-60a6-4bee-807c-2ddada36455e</FORMAT_GUID><PROTOCOL>Загрузка регистра СОГАЗМЕД (прикрепление)</PROTOCOL><VER>1.0</VER><Author>CBZEYA\wasp</Author><CREATE_BY>MalibuDTS</CREATE_BY><CREATE_TIME>14.12.2020T11:07:04</CREATE_TIME><TITLE>Прикрепление\Загрузка регистра СОГАЗМЕД (прикрепление)</TITLE><Description>загрузка</Description><WriteHistory>0</WriteHistory><DebugMode>0</DebugMode><SilentMode>0</SilentMode><WithoutAnimationMode>0</WithoutAnimationMode><FullTransactionMode>0</FullTransactionMode><MultiRowsMode>0</MultiRowsMode><MultiRowsAsOneMode>0</MultiRowsAsOneMode><TransactionLevel>IsolationLevel.ReadUncommitted</TransactionLevel><Loaders><Loader><Location>inner</Location><Type>CSV</Type><Config><Structure><Table><Name>_tmp_ZL</Name><FileName>28*.csv</FileName><Encoding></Encoding><Delimiter>;</Delimiter><FirstRowHeader>1</FirstRowHeader><Comment>Выберите файл зпгрузки</Comment></Table></Structure></Config></Loader></Loaders><TransportEngine><Config><Params><Param><ParamName>Files</ParamName><ParamType>Files</ParamType><ParamTitle>Files</ParamTitle></Param></Params><TempTables></TempTables><Reports></Reports><ScriptsBeforeLoad></ScriptsBeforeLoad><ScriptsAfterLoad><Script name="Обработка временной">DECLARE @SQL VARCHAR(MAX);
+
+SELECT
+	@SQL = ISNULL(@SQL, '')
++	'UPDATE [_tmp_ZL] SET ['
++	name
++	'] = REPLACE(['
++	name
++	'], ''"'', '''');'
+FROM sys.columns
+WHERE object_id = OBJECT_ID('_tmp_ZL', 'U');
+
+EXECUTE(@SQL);
+
+BEGIN TRY
+	DROP TABLE tmp_ZL;
+END TRY
+BEGIN CATCH
+
+END CATCH;
+SELECT * INTO tmp_ZL FROM _tmp_ZL;
+ALTER TABLE tmp_ZL ADD date_bd datetime;
+UPDATE tmp_ZL SET date_bd = CONVERT(datetime2,tmp_ZL.ДР);</Script></ScriptsAfterLoad><ScriptsAfterUnload></ScriptsAfterUnload></Config></TransportEngine><Unloaders></Unloaders><PathForMove></PathForMove><FileLoadPath></FileLoadPath><FileAutoLoad>0</FileAutoLoad><DataFormatGuid></DataFormatGuid><TransportChannelAlias_Export></TransportChannelAlias_Export><TransportChannelAlias_Import></TransportChannelAlias_Import><Comments>&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;style type="text/css"&gt;
+  * {
+    font-size: 95%; 
+    font-family: Verdana, Helvetica;
+  }
+&lt;/style&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 9:24]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 9:27]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 9:54]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 10:06]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 10:08]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 10:08]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 10:20]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 10:39]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 14:19]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [07.10.2020 15:48]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.10.2020 19:16]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [09.10.2020 20:17]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [12.10.2020 10:37]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [12.10.2020 11:10]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [13.10.2020 8:56]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [13.10.2020 9:01]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [14.12.2020 10:54]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [14.12.2020 10:56]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [14.12.2020 10:58]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [14.12.2020 11:01]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;&lt;hr/&gt;&lt;font color=black&gt;&lt;b&gt;ИНФОРМАЦИЯ О РЕДАКТИРОВАНИИ [14.12.2020 11:07]&lt;/b&gt;&lt;br/&gt;&lt;/font&gt;&lt;font color=gray&gt;&lt;b&gt;Данные пользователя:&lt;/b&gt; логин Windows: 'CBZEYA\wasp', логин Малибу: 'Admin', ФИО: 'Администратор'&lt;br/&gt;&lt;b&gt;Имя сервера:&lt;/b&gt; MIS&lt;br/&gt;&lt;b&gt;Именованная инсталляция:&lt;/b&gt; SQLMIS&lt;br/&gt;&lt;b&gt;Версия MSSQL:&lt;/b&gt; Microsoft SQL Server 2019 (RTM) - 15.0.2000.5 (X64) 
+	Sep 24 2019 13:48:23 
+	Copyright (C) 2019 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2019 Standard 10.0 &lt;X64&gt; (Build 17763: ) (Hypervisor)
+&lt;br/&gt;&lt;b&gt;База данных:&lt;/b&gt; amur_mis_cbzeya&lt;br/&gt;&lt;b&gt;Развернутые тематики:&lt;/b&gt; KLADR-8; OMS-530; HEALTH-472; App-17; LBR-48; MAIL-3; CARDIO-9; STT-54; DD-34; RLS-5; WEB-6; VACCINATION-29; HL7-6; SMP-9; ONCO-10; DIE-20; EHR-19; DEMOGRAPHY-18; PRP-6; EMD-4; ATF-1; DENT-7; &lt;br/&gt;&lt;b&gt;Версия библиотеки ядра MalibuSrv:&lt;/b&gt; MalibuSrv, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;b&gt;Версия библиотеки протоколов MalibuDts:&lt;/b&gt; MalibuDTS, Version=5.3.20.1720, Culture=neutral, PublicKeyToken=null&lt;br/&gt;&lt;/font&gt;&lt;font color=black&gt;&lt;br/&gt;&lt;b&gt;АВТОР: &lt;/b&gt;CBZEYA\wasp&lt;br/&gt;&lt;br/&gt;&lt;/font&gt;&lt;hr/&gt;</Comments></Main>
